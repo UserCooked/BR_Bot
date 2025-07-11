@@ -51,11 +51,16 @@ jobs:
 
       - name: Run Bot
         run: |
+          echo "Starting bot..."
           python3 -u user_interface.py "matchmaking" &
           PID=$!
-          sleep 21000 "quit"
-          wait $PID
           
+          # Auto-exit after 350 minutes (so restart runs without overlap)
+          ( sleep 21000 && echo "Time up. Killing bot..." && kill -SIGTERM $PID ) &
+          
+          wait $PID
+          echo "Bot ended cleanly."
+
       - name: 🔁 Self-Restart (Fire-and-Forget)
         if: always()
         run: gh workflow run bot.yml
