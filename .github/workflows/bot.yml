@@ -51,8 +51,10 @@ jobs:
 
       - name: Run Bot
         run: |
-          python3 -u user_interface.py "matchmaking" sleep 21000 "quit"
-
+          python3 -u user_interface.py "matchmaking" &
+          PID=$!
+          sleep 21000 "quit"
+          wait $PID
       - name: 🔁 Self-Restart (Fire-and-Forget)
         if: always()
         run: gh workflow run bot.yml
